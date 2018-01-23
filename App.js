@@ -75,6 +75,7 @@ class Playground extends Component <{}> {
 
 class HomeScreen extends Component<{}> {
   render() {
+    const { navigate } = this.props.navigation;
     return (
       <View style={styles.container}>
         <View style={styles.homeContainer}>
@@ -85,9 +86,42 @@ class HomeScreen extends Component<{}> {
         <View style={styles.homeButtonContainer}>
           <TouchableOpacity
             style={styles.randomButton}
+            onPress = {() => navigate("Gen")}
           >
           </TouchableOpacity>
         </View>
+      </View>
+    );
+  }
+}
+
+class GenScreen extends Component<{}> {
+
+  static navigationOptions = ({ navigation }) => {
+    return{
+      headerRight:
+        <Button
+          title="Next"
+          onPress={() => navigation.navigate('Eatery')}
+        />
+    };
+  }
+
+  render() {
+    return (
+      <View style={styles.container}>
+        <Text>generator</Text>
+      </View>
+    );
+  }
+}
+
+class EateryPage extends Component<{}> {
+
+  render() {
+    return (
+      <View style={styles.container}>
+        <Text>Eatery</Text>
       </View>
     );
   }
@@ -177,6 +211,27 @@ class Settings extends Component<{}> {
   }
 }
 
+const generatorNav = StackNavigator({
+  Home: {
+    screen: HomeScreen,
+    navigationOptions: {
+      header: null,
+    }
+  },
+  Gen: {
+    screen: GenScreen,
+    navigationOptions: {
+      headerTitle: 'Generator',
+    }
+  },
+  Eatery: {
+    screen: EateryPage,
+    navigationOptions: {
+      headerTitle: 'Eatery',
+    }
+  },
+})
+
 const Preference = StackNavigator({
   Preferences: {
     screen: Preferences,
@@ -202,7 +257,7 @@ const Preference = StackNavigator({
 
 const RootNavigator = TabNavigator({
   Home: {
-    screen: HomeScreen,
+    screen: generatorNav,
   },
   Fav: {
     screen: Favorites,
