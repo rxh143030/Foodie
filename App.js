@@ -429,7 +429,7 @@ const Preference = StackNavigator({
 
 const RootNavigator = TabNavigator({
   Home: {
-    screen: generatorNav,
+    screen: HomeScreen,
     navigationOptions: {
       tabBarIcon: (
         <Icon

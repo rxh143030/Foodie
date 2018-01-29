@@ -29,7 +29,7 @@ export default styles = StyleSheet.create({
     padding: 10,
     borderRadius: 15,
 
-    width: Dimensions.get('window').width - 40,
+    width: Dimensions.get('window').width - 35,
     height: Dimensions.get('window').height - 150,
     backgroundColor: '#FF6A5B'
   },
