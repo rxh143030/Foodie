@@ -7,16 +7,48 @@ import {
   Text,
   Button,
   TouchableOpacity,
-  View
+  TouchableHighlight,
+  View,
+  ScrollView,
 } from 'react-native';
 
 import {
   StackNavigator,
   TabNavigator,
-  NavigationActions,
+  NavigationActions
 } from 'react-navigation';
 
+import {cuisines} from './ZomatoItems';
+import {styes} from './styles';
+
+import { Icon } from 'react-native-elements';
+
+
+// Icon example
+
+// <Icon
+//   size = {15}
+//   name = "check"
+//   type = "feather"
+//   color = {this.state.bgcolor}
+//   iconStyle ={{paddingRight: 5}}
+// />
+
 const zomatoKey = '15754bd9cbe068ad2ba2606401000b5f';
+
+const colorTable = {
+   blue: '#3F97D0',
+   // yellow: '#FFDA70',
+   peach: '#FF6A5B',
+   orange: '#F89C5F',
+   green: '#54A95F',
+   purple: '#9871CF',
+}
+
+const colorArray = Object.keys(colorTable);
+// [blue, yellow, peach, orange, green]
+// colorArray[0] = blue
+
 
 class Playground extends Component <{}> {
 
@@ -74,19 +106,48 @@ class Playground extends Component <{}> {
 }
 
 class HomeScreen extends Component<{}> {
+
+  constructor(props){
+    super(props);
+
+    this.state = {
+      isVisible: false,
+    };
+  }
+
+
   render() {
     const { navigate } = this.props.navigation;
     return (
       <View style={styles.container}>
+
+        <View style={this.state.isVisible && styles.overlay}>
+          <View style={styles.exitOverlay}>
+            <Icon
+              size = {25}
+              name = "x"
+              type = "feather"
+              color = '#ffffff'
+              onPress = {() => this.setState({isVisible: !this.state.isVisible})}
+            />
+          </View>
+          <View style={styles.refreshOverlay}>
+
+          </View>
+          <View style={styles.resultOverlay}>
+
+          </View>
+        </View>
+
         <View style={styles.homeContainer}>
-          <Text>
+          <Text h1>
             Foodie!
           </Text>
         </View>
         <View style={styles.homeButtonContainer}>
           <TouchableOpacity
             style={styles.randomButton}
-            onPress = {() => navigate("Gen")}
+            onPress = {() => this.setState({isVisible: !this.state.isVisible})}
           >
           </TouchableOpacity>
         </View>
@@ -154,11 +215,18 @@ class Preferences extends Component<{}> {
   }
 }
 
+
 class PreferencesLikes extends Component<{}> {
 
   constructor(props) {
     super(props);
     this.props.navigation.state.key = 'Likes';
+
+    this.state = {
+      buttonToggle: false,
+      styleOn: styles.buttonStyleOn,
+      styleOff: styles.buttonStyleOff,
+    }
   }
 
   static navigationOptions = ({ navigation }) => {
@@ -166,16 +234,96 @@ class PreferencesLikes extends Component<{}> {
       headerRight:
         <Button
           title="Next"
-          onPress={() => navigation.navigate('Dislikes')}
+          onPress={() => navigation.navigate('Dislikes', {likeKey: navigation.state.key})}
         />
     };
   }
 
   render(){
+    var cuisineList = [];
+    var i = 0;
+    for(eatery in cuisines){
+        cuisineList.push(
+          <PrefButton key={'eatery' + i++} eateryName={cuisines[eatery]}/>
+        )
+    }
+
     return (
-      <View style={styles.container}>
-        <Text>likes</Text>
+      <View style={{flex:1, backgroundColor: '#F5FCFF'}}>
+        <ScrollView>
+          <View style={{
+            flexDirection: 'row',
+            justifyContent: 'center',
+            flexWrap: 'wrap',
+            paddingTop: 5,
+          }}>
+            {cuisineList}
+          </View>
+        </ScrollView>
       </View>
+    );
+  }
+}
+
+class PrefButton extends Component<{}> {
+
+  constructor(props) {
+    super(props);
+
+    this.colorChoice = (Math.floor(Math.random() * 5));
+    this.state = {
+      bgcolor: colorTable[colorArray[this.colorChoice]],
+      buttonToggle: false,
+      nameOn:{
+        color: colorTable[colorArray[this.colorChoice]]
+      },
+      nameOff: {
+        color: '#ffffff'
+      },
+      styleOn: {
+        padding: 8.5,
+        margin: 4,
+        borderRadius: 25,
+        borderColor: colorTable[colorArray[this.colorChoice]],
+        borderWidth: 1.5,
+        backgroundColor: '#ffffff',
+      },
+      styleOff: {
+        padding: 10,
+        margin: 4,
+        borderRadius: 25,
+        backgroundColor: colorTable[colorArray[this.colorChoice]],
+        flexDirection: 'row',
+      }
+    }
+  }
+
+  render(){
+
+    if(this.state.buttonToggle){
+      checkmark = (
+        <Icon
+          size = {15}
+          name = "check"
+          type = "feather"
+          color = {this.state.bgcolor}
+          iconStyle ={{paddingRight: 5}}
+        />
+      )
+    } else {
+      checkmark = (<Text></Text>)
+    }
+
+    return(
+      <TouchableOpacity
+        style={[this.state.styleOff, this.state.buttonToggle && this.state.styleOn]}
+        onPress={() => this.setState({buttonToggle: !this.state.buttonToggle})}
+      >
+        {checkmark}
+        <Text style={[this.state.nameOff, this.state.buttonToggle && this.state.nameOn]}>
+          {this.props.eateryName}
+        </Text>
+      </TouchableOpacity>
     );
   }
 }
@@ -189,13 +337,37 @@ class PreferencesDislikes extends Component<{}> {
           title="Done"
           onPress={() => navigation.dispatch(NavigationActions.back({key: 'Likes'}))}
         />
+      // headerLeft:
+      // <Button
+      //   title="Back"
+      //   onPress={() => }
+      // />
     };
   }
 
+//
+
   render(){
+    var cuisineList = [];
+    var i = 0;
+    for(eatery in cuisines){
+        cuisineList.push(
+          <PrefButton key={'eatery' + i++} eateryName={cuisines[eatery]}/>
+        )
+    }
+
     return (
-      <View style={styles.container}>
-        <Text>Dislikes</Text>
+      <View style={{flex:1, backgroundColor: '#F5FCFF'}}>
+        <ScrollView>
+          <View style={{
+            flexDirection: 'row',
+            justifyContent: 'center',
+            flexWrap: 'wrap',
+            paddingTop: 5,
+          }}>
+            {cuisineList}
+          </View>
+        </ScrollView>
       </View>
     );
   }
@@ -236,7 +408,7 @@ const Preference = StackNavigator({
   Preferences: {
     screen: Preferences,
     navigationOptions: {
-      header: null,
+      headerTitle: 'Preferences',
     }
   },
 
@@ -258,41 +430,56 @@ const Preference = StackNavigator({
 const RootNavigator = TabNavigator({
   Home: {
     screen: generatorNav,
+    navigationOptions: {
+      tabBarIcon: (
+        <Icon
+          name='home'
+          type='feather'
+          color='#517fa4'
+          size={25}
+        />
+      )
+    }
   },
   Fav: {
     screen: Favorites,
+    navigationOptions: {
+      tabBarIcon: (
+        <Icon
+          name='favorite-border'
+          type='materialicons'
+          color='#517fa4'
+          size={25}
+        />
+      )
+    }
   },
   Pref: {
     screen: Preference,
+    navigationOptions: {
+      tabBarIcon: (
+        <Icon
+          name='list'
+          type='feather'
+          color='#517fa4'
+          size={25}
+        />
+      )
+    }
   },
   Settings: {
     screen: Settings,
+    navigationOptions: {
+      tabBarIcon: (
+        <Icon
+          name='settings'
+          type='feather'
+          color='#517fa4'
+          size={25}
+        />
+      )
+    }
   },
 });
 
 export default RootNavigator;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  homeContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  homeButtonContainer: {
-    flex: 1,
-    justifyContent: 'flex-start',
-    marginTop: 100,
-  },
-  randomButton: {
-    padding: 60,
-    borderRadius: 100,
-    backgroundColor: '#D9D9D9',
-  },
-
-});
