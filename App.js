@@ -216,55 +216,6 @@ class Preferences extends Component<{}> {
 }
 
 
-class PreferencesLikes extends Component<{}> {
-
-  constructor(props) {
-    super(props);
-    this.props.navigation.state.key = 'Likes';
-
-    this.state = {
-      buttonToggle: false,
-      styleOn: styles.buttonStyleOn,
-      styleOff: styles.buttonStyleOff,
-    }
-  }
-
-  static navigationOptions = ({ navigation }) => {
-    return{
-      headerRight:
-        <Button
-          title="Next"
-          onPress={() => navigation.navigate('Dislikes', {likeKey: navigation.state.key})}
-        />
-    };
-  }
-
-  render(){
-    var cuisineList = [];
-    var i = 0;
-    for(eatery in cuisines){
-        cuisineList.push(
-          <PrefButton key={'eatery' + i++} eateryName={cuisines[eatery]}/>
-        )
-    }
-
-    return (
-      <View style={{flex:1, backgroundColor: '#F5FCFF'}}>
-        <ScrollView>
-          <View style={{
-            flexDirection: 'row',
-            justifyContent: 'center',
-            flexWrap: 'wrap',
-            paddingTop: 5,
-          }}>
-            {cuisineList}
-          </View>
-        </ScrollView>
-      </View>
-    );
-  }
-}
-
 class PrefButton extends Component<{}> {
 
   constructor(props) {
@@ -328,7 +279,61 @@ class PrefButton extends Component<{}> {
   }
 }
 
+
+class PreferencesLikes extends Component<{}> {
+
+  constructor(props) {
+    super(props);
+    this.props.navigation.state.key = 'Likes';
+
+    this.state = {
+      buttonToggle: false,
+      styleOn: styles.buttonStyleOn,
+      styleOff: styles.buttonStyleOff,
+    }
+  }
+
+  static navigationOptions = ({ navigation }) => {
+    return{
+      headerRight:
+        <Button
+          title="Next"
+          onPress={() => navigation.navigate('Dislikes', {likeKey: navigation.state.key})}
+        />
+    };
+  }
+
+  render(){
+    var cuisineList = [];
+    var i = 0;
+    for(eatery in cuisines){
+        cuisineList.push(
+          <PrefButton key={'eatery' + i++} eateryName={cuisines[eatery]}/>
+        )
+    }
+
+    return (
+      <View style={{flex:1, backgroundColor: '#F5FCFF'}}>
+        <ScrollView>
+          <View style={{
+            flexDirection: 'row',
+            justifyContent: 'center',
+            flexWrap: 'wrap',
+            paddingTop: 5,
+          }}>
+            {cuisineList}
+          </View>
+        </ScrollView>
+      </View>
+    );
+  }
+}
+
 class PreferencesDislikes extends Component<{}> {
+
+  constructor(props){
+    super(props);
+  }
 
   static navigationOptions = ({ navigation }) => {
     return{
@@ -337,11 +342,7 @@ class PreferencesDislikes extends Component<{}> {
           title="Done"
           onPress={() => navigation.dispatch(NavigationActions.back({key: 'Likes'}))}
         />
-      // headerLeft:
-      // <Button
-      //   title="Back"
-      //   onPress={() => }
-      // />
+
     };
   }
 
@@ -416,6 +417,7 @@ const Preference = StackNavigator({
     screen: PreferencesLikes,
     navigationOptions: {
       headerTitle: 'What do you like?',
+      headerLeft: <View></View>
     },
   },
 
@@ -423,6 +425,7 @@ const Preference = StackNavigator({
     screen: PreferencesDislikes,
     navigationOptions: {
       headerTitle: 'What do you not like?',
+      headerLeft: <View></View>
     },
   },
 });
